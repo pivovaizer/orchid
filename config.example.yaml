@@ -1,0 +1,47 @@
+# Orchid Configuration Example
+# Copy this file to config.yaml and edit to match your setup
+
+# ── Plotter Settings ─────────────────────────────────────────
+plotter:
+  executable: "/usr/local/bin/plotter"   # Path to pos2 plotter binary
+  k: 28                                   # Plot size (18-32, even only)
+  strength: 2                             # Proof strength (2-255)
+  testnet: true                           # Use testnet parameters
+  verbose: false                          # Show verbose plotter output
+  plot_index: 0                           # Plot index (0-65535)
+  meta_group: 0                           # Meta group (0-255)
+
+  # Chia keys (required for mainnet, leave empty for testnet)
+  farmer_key: ""
+  pool_key: ""
+  contract_address: ""
+
+# ── Directories ──────────────────────────────────────────────
+directories:
+  # Temporary directories for plotting (fast NVMe recommended)
+  tmp:
+    - "/mnt/nvme0/tmp"
+    - "/mnt/nvme1/tmp"
+
+  # Destination for completed plots (before archiving)
+  dst:
+    - "/mnt/ssd/plots"
+
+# ── Scheduler ────────────────────────────────────────────────
+scheduler:
+  max_jobs: 4                # Max parallel plotting jobs
+  max_plots: 0               # Total plots to create (0 = infinite)
+  stagger_minutes: 30        # Delay between job launches
+  use_gpu: false             # GPU acceleration (future)
+
+# ── Archiving ────────────────────────────────────────────────
+# Transfers completed plots to remote/archive storage
+archiving:
+  enabled: true
+  command: "rsync"                        # "rsync", "scp", or "wsl rsync"
+  rsync_flags: "-avP --remove-source-files"
+  archive_dirs:
+    - "farmer@192.168.1.10:/mnt/hdd01/plots"
+    - "farmer@192.168.1.10:/mnt/hdd02/plots"
+    - "farmer@192.168.1.10:/mnt/hdd03/plots"
+  min_free_bytes: 10000000000             # 10GB reserve per disk
