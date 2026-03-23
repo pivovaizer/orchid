@@ -16,7 +16,7 @@ def find_completed_plots(dst_dirs: list[str]) -> list[Path]:
         if not dst_path.exists():
             continue
         for f in dst_path.iterdir():
-            if f.suffix in (".plot", ".bin") and f.is_file():
+            if f.suffix in (".plot", ".plot2", ".bin") and f.is_file():
                 plots.append(f)
     return sorted(plots, key=lambda p: p.stat().st_mtime)
 
@@ -42,7 +42,7 @@ def list_plots_in_dir(archive_dir: str) -> set[str]:
     path = Path(archive_dir)
     if not path.exists():
         return set()
-    return {f.name for f in path.iterdir() if f.suffix in (".plot", ".bin") and f.is_file()}
+    return {f.name for f in path.iterdir() if f.suffix in (".plot", ".plot2", ".bin") and f.is_file()}
 
 
 def is_remote_dir(d: str) -> bool:

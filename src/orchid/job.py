@@ -26,3 +26,5 @@ class PlotJob(BaseModel):
     error_message: str | None = None
     progress: int = 0          # 0-100%
     phase: str = ""            # e.g. "matching T1", "postsort T2"
+    memo_hex: str = ""         # memo bytes (hex) for post-processing
+    plot_file: str = ""        # final .plot2 path after finalization

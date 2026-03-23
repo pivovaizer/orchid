@@ -83,7 +83,7 @@ def dirs(ctx):
         total = get_total_bytes(d)
         if free is not None and total is not None:
             used_pct = (1 - free / total) * 100
-            plots = list(Path(d).glob("*.plot")) + list(Path(d).glob("*.bin"))
+            plots = list(Path(d).glob("*.plot")) + list(Path(d).glob("*.plot2")) + list(Path(d).glob("*.bin"))
             click.echo(f"  {d}: {format_bytes(free)} free / {format_bytes(total)} total ({used_pct:.0f}% used) [{len(plots)} plots]")
         else:
             click.echo(f"  {d}: NOT FOUND")

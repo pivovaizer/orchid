@@ -12,6 +12,22 @@ wheels = [
 ]
 
 [[package]]
+name = "blspy"
+version = "2.0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "wheel" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2a/9e/ec02e51b7f93c487dbc2fa1413932b745ce42490d49d10cf785bfaf5f8ca/blspy-2.0.3.tar.gz", hash = "sha256:246dd0c69d4e53aa66c06d674402040f2f86b352afe2135712f7ec6a62b2ad8c", size = 144821, upload-time = "2024-03-21T15:12:46.897Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/60/e257a23c92f21afe0feda38a70949bda40a6afec5fa989b652780ce8cc97/blspy-2.0.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:96c78e035ea15c826e2330ad2a2619a6cb3519ac977f74a608911ef2c105d3ec", size = 305007, upload-time = "2024-03-21T15:12:19.617Z" },
+    { url = "https://files.pythonhosted.org/packages/88/a6/4cf71d3aa664667daf512371d2a6e4758820b6630ceaa437044f9481de37/blspy-2.0.3-cp312-cp312-macosx_11_0_x86_64.whl", hash = "sha256:43e7da8f2880106d522dfb26f8015a6771ec3306c3baa7fc22561f6c0ba38a7c", size = 323499, upload-time = "2024-03-21T15:12:21.748Z" },
+    { url = "https://files.pythonhosted.org/packages/8a/82/403c13f5afba6eea44a3ba8ec363a9bc9dc1521f7d060c50baaa15b40487/blspy-2.0.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ff263b4a8967a0337d31904837ca53678dd3982187c9d37b34804e8b682ffce9", size = 330318, upload-time = "2024-03-21T15:12:23.177Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/c0/8652f779edd6b0222fcea7474aa075f3bb661960e01144918019c8edc446/blspy-2.0.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:903afd454563ce26c6b55c9b11500b688503103f96673e37b8424a1af0a47e96", size = 357619, upload-time = "2024-03-21T15:12:24.738Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/c1/334b1cba24c6a8a4b9a693a311ffb54bed7329877bbe3e603136546a244f/blspy-2.0.3-cp312-cp312-win_amd64.whl", hash = "sha256:b26199bdbbbd02aacd9ffc802aad983a76b1ffd6745a6b838629b155ec0c63fe", size = 268548, upload-time = "2024-03-21T15:12:26.365Z" },
+]
+
+[[package]]
 name = "click"
 version = "8.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -87,6 +103,7 @@ name = "orchid"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "blspy" },
     { name = "click" },
     { name = "psutil" },
     { name = "pydantic" },
@@ -96,11 +113,21 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "blspy", specifier = ">=2.0.3" },
     { name = "click", specifier = ">=8.3.1" },
     { name = "psutil", specifier = ">=7.2.2" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "textual", specifier = ">=8.1.1" },
+]
+
+[[package]]
+name = "packaging"
+version = "26.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/ee/299d360cdc32edc7d2cf530f3accf79c4fca01e96ffc950d8a52213bd8e4/packaging-26.0.tar.gz", hash = "sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4", size = 143416, upload-time = "2026-01-21T20:50:39.064Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/b9/c538f279a4e237a006a2c98387d081e9eb060d203d8ed34467cc0f0b9b53/packaging-26.0-py3-none-any.whl", hash = "sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529", size = 74366, upload-time = "2026-01-21T20:50:37.788Z" },
 ]
 
 [[package]]
@@ -339,4 +366,16 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/78/67/9a363818028526e2d4579334460df777115bdec1bb77c08f9db88f6389f2/uc_micro_py-2.0.0.tar.gz", hash = "sha256:c53691e495c8db60e16ffc4861a35469b0ba0821fe409a8a7a0a71864d33a811", size = 6611, upload-time = "2026-03-01T06:31:27.526Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/61/73/d21edf5b204d1467e06500080a50f79d49ef2b997c79123a536d4a17d97c/uc_micro_py-2.0.0-py3-none-any.whl", hash = "sha256:3603a3859af53e5a39bc7677713c78ea6589ff188d70f4fee165db88e22b242c", size = 6383, upload-time = "2026-03-01T06:31:26.257Z" },
+]
+
+[[package]]
+name = "wheel"
+version = "0.46.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/89/24/a2eb353a6edac9a0303977c4cb048134959dd2a51b48a269dfc9dde00c8a/wheel-0.46.3.tar.gz", hash = "sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803", size = 60605, upload-time = "2026-01-22T12:39:49.136Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/87/22/b76d483683216dde3d67cba61fb2444be8d5be289bf628c13fc0fd90e5f9/wheel-0.46.3-py3-none-any.whl", hash = "sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d", size = 30557, upload-time = "2026-01-22T12:39:48.099Z" },
 ]

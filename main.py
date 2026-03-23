@@ -1,6 +1,4 @@
-def main():
-    print("Hello from orchid!")
-
+from orchid.cli import cli
 
 if __name__ == "__main__":
-    main()
+    cli()

@@ -7,7 +7,7 @@ plotter:
   k: 28                                   # Plot size (18-32, even only)
   strength: 2                             # Proof strength (2-255)
   testnet: true                           # Use testnet parameters
-  verbose: false                          # Show verbose plotter output
+  verbose: true                           # Verbose output (required for progress parsing)
   plot_index: 0                           # Plot index (0-65535)
   meta_group: 0                           # Meta group (0-255)
 

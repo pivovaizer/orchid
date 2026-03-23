@@ -10,7 +10,7 @@ class PlotterConfig(BaseModel):
     plot_index: int = 0
     meta_group: int = 0
     testnet: bool = True
-    verbose: bool = False
+    verbose: bool = True
 
     # Chia keys — will be required for mainnet
     farmer_key: str = ""
