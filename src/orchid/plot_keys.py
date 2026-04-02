@@ -17,6 +17,41 @@ from chia_rs import AugSchemeMPL, G1Element, compute_plot_id_v2
 
 log = logging.getLogger("orchid")
 
+
+def validate_keys(farmer_key: str, pool_key: str = "", contract_address: str = "") -> list[str]:
+    """Validate Chia keys. Returns list of error messages (empty = all good)."""
+    errors = []
+
+    if farmer_key:
+        if len(farmer_key) != 96:
+            errors.append(f"farmer_key must be 96 hex characters, got {len(farmer_key)}")
+        else:
+            try:
+                G1Element.from_bytes(bytes.fromhex(farmer_key))
+            except Exception:
+                errors.append("farmer_key is not a valid BLS public key")
+
+    if pool_key:
+        if len(pool_key) != 96:
+            errors.append(f"pool_key must be 96 hex characters, got {len(pool_key)}")
+        else:
+            try:
+                G1Element.from_bytes(bytes.fromhex(pool_key))
+            except Exception:
+                errors.append("pool_key is not a valid BLS public key")
+
+    if contract_address:
+        if len(contract_address) != 64:
+            errors.append(f"contract_address must be 64 hex characters, got {len(contract_address)}")
+        else:
+            try:
+                bytes.fromhex(contract_address)
+            except Exception:
+                errors.append("contract_address is not valid hex")
+
+    return errors
+
+
 # pos2 .bin file header layout:
 # 4 bytes: "pos2" magic
 # 1 byte:  format version

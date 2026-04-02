@@ -18,7 +18,12 @@ from tui.app import OrchidApp
 @click.pass_context
 def cli(ctx, config):
     ctx.ensure_object(dict)
-    ctx.obj["config"] = load_config(config)
+    ctx.obj["config_error"] = None
+    try:
+        ctx.obj["config"] = load_config(config)
+    except Exception as e:
+        ctx.obj["config"] = None
+        ctx.obj["config_error"] = str(e)
     ctx.obj["logger"] = setup_logging()
 
 
@@ -164,6 +169,7 @@ def tui(ctx, verbose):
 
     from tui.app import OrchidApp
     cfg = ctx.obj["config"]
+    config_error = ctx.obj.get("config_error")
     config_path = ctx.parent.params.get("config", "config.yaml")
-    app = OrchidApp(config=cfg, config_path=config_path, verbose_logs=verbose)
+    app = OrchidApp(config=cfg, config_path=config_path, verbose_logs=verbose, config_error=config_error)
     app.run()

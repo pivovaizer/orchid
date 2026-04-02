@@ -13,6 +13,7 @@ from orchid.loader import load_config
 from orchid.job import JobStatus
 from orchid.archive import Archiver
 from orchid.disk import get_remote_disk_usage, parse_remote_dir, format_bytes
+from orchid.plot_keys import validate_keys
 
 
 class JobPanel(Static):
@@ -53,11 +54,12 @@ class OrchidApp(App):
         ("ctrl+r", "refresh", "Refresh"),
     ]
 
-    def __init__(self, config=None, config_path: str = "config.yaml", verbose_logs: bool = False):
+    def __init__(self, config=None, config_path: str = "config.yaml", verbose_logs: bool = False, config_error: str | None = None):
         super().__init__()
         self.config = config
         self.config_path = config_path
         self.verbose_logs = verbose_logs
+        self.config_error = config_error
         self.manager = None
         self._plotting = False
         self._draining = False
@@ -106,6 +108,10 @@ class OrchidApp(App):
 
     def _show_welcome(self):
         self.log_write("Orchid TUI started")
+        if self.config_error:
+            self.log_write(f"[red bold]Config error — fix config.yaml and restart:[/red bold]")
+            self.log_write(f"[red]{self.config_error}[/red]")
+            return
         if self.config:
             dirs = self.config.directories.tmp + self.config.directories.dst
             self.log_write(f"Monitoring {len(set(dirs))} directories")
@@ -204,6 +210,18 @@ class OrchidApp(App):
         if self._plotting:
             self.log_write("[yellow]Already plotting[/yellow]")
             return
+
+        if self.config_error:
+            self.log_write(f"[red]Cannot start — config error: {self.config_error}[/red]")
+            return
+
+        cfg = self.config.plotter
+        if not cfg.testnet and (cfg.farmer_key or cfg.contract_address or cfg.pool_key):
+            errors = validate_keys(cfg.farmer_key, cfg.pool_key, cfg.contract_address)
+            if errors:
+                for e in errors:
+                    self.log_write(f"[red]Invalid key: {e}[/red]")
+                return
 
         self._plotting = True
         self._draining = False

@@ -154,6 +154,9 @@ class Archiver:
             if proc.poll() is not None:
                 if proc.returncode == 0:
                     self._log(f"Transfer complete: {plot.name}")
+                    if "scp" in self.cfg.command.lower() and plot.exists():
+                        plot.unlink()
+                        log.info("Deleted source after scp: %s", plot.name)
                 else:
                     self._log(f"Transfer failed (exit {proc.returncode}): {plot.name}")
                 done.append(archive_dir)

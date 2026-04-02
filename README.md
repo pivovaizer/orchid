@@ -198,6 +198,9 @@ archiving:
   ssh-keygen -t ed25519
   type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh farmer@192.168.1.10 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
   ```
+- rsync on Windows — pick one:
+  - **WSL** (recommended if already installed): `sudo apt install rsync`, use `command: "wsl rsync"` in config
+  - **MSYS2**: `winget install MSYS2.MSYS2`, then in MSYS2 terminal: `pacman -S rsync`, use full path `command: "C:/msys64/usr/bin/rsync.exe"`
 
 ### Single machine (no archiving)
 
