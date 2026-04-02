@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "blspy>=2.0.3",
+    "chia-rs>=0.42.0",
     "click>=8.3.1",
     "psutil>=7.2.2",
     "pydantic>=2.12.5",

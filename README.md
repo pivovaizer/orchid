@@ -37,7 +37,7 @@ uv run orchid tui
 # First run will open a setup wizard to configure everything
 
 # Option 2: CLI mode
-cp config.example.yaml config.yaml
+cp config-example.yaml config.yaml
 # Edit config.yaml with your settings
 uv run orchid start
 ```
@@ -239,13 +239,15 @@ src/tui/                 # Terminal UI
 
 ## Status
 
-Early development. Core features working:
-- Plot creation and job management
+Core features working and tested:
+- Plot creation with correct plot_id via `chia_rs.compute_plot_id_v2`
+- BLS key generation (taproot for NFT plots, OG plots)
+- Memo injection + `.bin` → `.plot2` rename
 - Real-time TUI dashboard
 - Archiving via rsync/scp
 - Disk monitoring and validation
 
-Waiting for the full PoS2 plotter release to finalize CLI integration. When released, only `config.py:build_command()` needs updating.
+Waiting for full PoS2 release. When pos2-chip CLI exposes `--farmer-key` / `--contract`, remove `inject_memo()` post-processing and update `config.py:build_command()`.
 
 ## License
 

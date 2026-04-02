@@ -65,7 +65,6 @@ class PlotManager:
         elif cfg.farmer_key and (cfg.pool_key or cfg.contract_address):
             # Generate proper plot_id from chia keys
             result = generate_keys_and_plot_id(
-                k=cfg.k,
                 strength=cfg.strength,
                 plot_index=cfg.plot_index,
                 meta_group=cfg.meta_group,

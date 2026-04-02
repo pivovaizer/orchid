@@ -1,8 +1,9 @@
 """Plot ID generation, memo construction, and post-processing for pos2-chip plots.
 
-Implements the same logic as chia-blockchain's create_plots.py:
-- calculate_plot_id_v2: SHA256-based plot ID from keys and parameters
-- memo: pool_key/puzzle_hash + farmer_pk + master_sk
+- compute_plot_id_v2: plot ID via chia_rs (matches chia-blockchain exactly)
+- taproot: generated via AugSchemeMPL.key_gen (NFT plots)
+- memo: pool_contract_ph + farmer_pk + master_sk (112 bytes) for NFT
+        pool_pk + farmer_pk + master_sk (128 bytes) for OG
 - inject_memo: overwrite zero memo in .bin file after plotting
 - finalize_plot: inject memo + rename .bin → .plot2
 """
@@ -12,6 +13,7 @@ import logging
 import secrets
 import struct
 from pathlib import Path
+from chia_rs import AugSchemeMPL, G1Element, compute_plot_id_v2
 
 log = logging.getLogger("orchid")
 
@@ -35,34 +37,7 @@ def std_hash(data: bytes) -> bytes:
 
 # ── Plot ID ────────────────────────────────────────────────────
 
-def calculate_plot_id_v2(
-    k: int,
-    index: int,
-    meta_group: int,
-    pool_pk_or_ph: bytes,
-    plot_public_key: bytes,
-    strength: int,
-) -> bytes:
-    """Calculate plot ID for v2 plots.
 
-    Mirrors chia.types.blockchain_format.proof_of_space.calculate_plot_id_v2:
-        plot_group_id = sha256(k(1) + version(1) + strength(1) + plot_public_key + pool_pk_or_ph)
-        plot_id = sha256(plot_group_id + index(2 big-endian) + meta_group(1))
-    """
-    version = 2
-    plot_group_id = std_hash(
-        k.to_bytes(1, "big")
-        + version.to_bytes(1, "big")
-        + strength.to_bytes(1, "big")
-        + plot_public_key
-        + pool_pk_or_ph
-    )
-    plot_id = std_hash(
-        plot_group_id
-        + index.to_bytes(2, "big")
-        + meta_group.to_bytes(1, "big")
-    )
-    return plot_id
 
 
 def generate_plot_id_testnet() -> str:
@@ -70,27 +45,9 @@ def generate_plot_id_testnet() -> str:
     return secrets.token_hex(32)
 
 
-# ── Key helpers ────────────────────────────────────────────────
-
-def _try_import_blspy():
-    """Try to import BLS library for key operations."""
-    try:
-        from blspy import AugSchemeMPL, G1Element, PrivateKey
-        return AugSchemeMPL, G1Element, PrivateKey
-    except ImportError:
-        pass
-    try:
-        from chia_rs import AugSchemeMPL, G1Element, PrivateKey
-        return AugSchemeMPL, G1Element, PrivateKey
-    except ImportError:
-        pass
-    return None, None, None
-
-
 def _master_sk_to_local_sk(master_sk):
     """Derive local secret key from master, same as chia's derive_keys."""
     # EIP-2333 derivation path: m/12381/8444/3/0
-    from blspy import AugSchemeMPL
     return AugSchemeMPL.derive_child_sk(
         AugSchemeMPL.derive_child_sk(
             AugSchemeMPL.derive_child_sk(
@@ -113,15 +70,13 @@ def _generate_plot_public_key(local_pk, farmer_pk, include_taproot: bool = False
         return local_pk + farmer_pk
 
     # Taproot: hash(local_pk + farmer_pk) → taproot_sk → taproot_pk
-    from blspy import AugSchemeMPL, G1Element, PrivateKey
-    taproot_message = bytes(local_pk + farmer_pk)
+    taproot_message = bytes(local_pk + farmer_pk) + bytes(local_pk) + bytes(farmer_pk)
     taproot_hash = std_hash(taproot_message)
-    taproot_sk = PrivateKey.from_bytes(taproot_hash)
+    taproot_sk = AugSchemeMPL.key_gen(taproot_hash)
     return local_pk + farmer_pk + taproot_sk.get_g1()
 
 
 def generate_keys_and_plot_id(
-    k: int,
     strength: int,
     plot_index: int,
     meta_group: int,
@@ -133,10 +88,6 @@ def generate_keys_and_plot_id(
 
     Returns (plot_id_hex, memo_bytes, master_sk_bytes) or None if BLS not available.
     """
-    AugSchemeMPL, G1Element, PrivateKey = _try_import_blspy()
-    if AugSchemeMPL is None:
-        log.warning("blspy/chia_rs not installed, cannot generate proper plot_id")
-        return None
 
     # Generate random master secret key for this plot
     master_sk = AugSchemeMPL.key_gen(secrets.token_bytes(32))
@@ -154,9 +105,8 @@ def generate_keys_and_plot_id(
         pool_ph = bytes.fromhex(contract_address_hex)
         include_taproot = True
         plot_public_key = _generate_plot_public_key(local_pk, farmer_pk, include_taproot)
-        plot_id = calculate_plot_id_v2(
-            k, plot_index, meta_group, pool_ph, bytes(plot_public_key), strength
-        )
+        plot_id = bytes(compute_plot_id_v2
+            (strength, plot_public_key, None, pool_ph, plot_index, meta_group))
         memo = pool_ph + bytes(farmer_pk) + bytes(master_sk)
         assert len(memo) == 112  # 32 + 48 + 32
     elif pool_pk_hex:
@@ -164,9 +114,8 @@ def generate_keys_and_plot_id(
         pool_pk = G1Element.from_bytes(bytes.fromhex(pool_pk_hex))
         include_taproot = False
         plot_public_key = _generate_plot_public_key(local_pk, farmer_pk, include_taproot)
-        plot_id = calculate_plot_id_v2(
-            k, plot_index, meta_group, bytes(pool_pk), bytes(plot_public_key), strength
-        )
+        plot_id = bytes(compute_plot_id_v2
+            (strength, plot_public_key, pool_pk, None, plot_index, meta_group))
         memo = bytes(pool_pk) + bytes(farmer_pk) + bytes(master_sk)
         assert len(memo) == 128  # 48 + 48 + 32
     else:

@@ -28,6 +28,32 @@ wheels = [
 ]
 
 [[package]]
+name = "chia-rs"
+version = "0.42.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/30/73/4e35e0ee3e27cae7fb75ea18de1fbf370d1fdcfee95688782c31d03d6da1/chia_rs-0.42.0.tar.gz", hash = "sha256:90ce4be20acd5715c190f705377426924400ab825b0a568baf03abc49a80d4c7", size = 311354, upload-time = "2026-03-31T12:21:22.277Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/bf/16fa7c2a0fd3826b701f3d7945bbfd5b10aa6df97e0bcc430835fa3532c8/chia_rs-0.42.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:03ddb1232aeb5c0bc6b4b4472c06e4089140630b39a75053d4189818280683e7", size = 3724427, upload-time = "2026-03-31T12:20:55.414Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/c3/6f3027e433684e6c3a44c0a4c5c4808d296a4e3cf25fcf7d9a3c39955edc/chia_rs-0.42.0-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:229dce5d26c5dd660fa17e9aaec81ebbc080a4919593d4a9b147f929bcaa613d", size = 4032042, upload-time = "2026-03-31T12:20:57.054Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/6b/725102b9ba0aed3bd6ce43e80963da86cccf7ed013417a80d941208d8814/chia_rs-0.42.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:42fe55992ad7ba7eaadbd2a61541a2acfaefe70925df9a6ed3ca65808b35ecea", size = 5500294, upload-time = "2026-03-31T12:20:58.76Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/61/d98b04670bca262de3755105c079f7b1d88b38b3d7c970c1a1e69404f930/chia_rs-0.42.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:d2141d24974265ac47def75d3d9917f7265def851bda6ba1d87f0756881bce9a", size = 5588312, upload-time = "2026-03-31T12:21:00.715Z" },
+    { url = "https://files.pythonhosted.org/packages/ed/91/af18f09353887c297089d61202ce1646bb1cb7a445f22a48ce866a907837/chia_rs-0.42.0-cp312-cp312-win_amd64.whl", hash = "sha256:31955cfcf1a4f523f0907f936aac5f52e74c5606027db0aab2cbffbdb03d2f86", size = 3673690, upload-time = "2026-03-31T12:21:02.494Z" },
+    { url = "https://files.pythonhosted.org/packages/68/30/b4bd8a8eb67ae4426b9c04acd8ed4ea429d41a8e7611fae98d4f9606a100/chia_rs-0.42.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:50f3ee3349995bf94e9415243814007c303300afbc178a1c6e892cedf14ba75c", size = 3724525, upload-time = "2026-03-31T12:21:04.151Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/59/f6c3221bcae235a8fc7fe477449b3dfbb4e310c71a3ab3e588f38a8338e3/chia_rs-0.42.0-cp313-cp313-macosx_13_0_x86_64.whl", hash = "sha256:5a11ff69b69140d3541a413f19769978152f0d0e6804eb5504595f2cd5dc28a5", size = 4030483, upload-time = "2026-03-31T12:21:05.957Z" },
+    { url = "https://files.pythonhosted.org/packages/17/86/685a27593fb7df6eb8deca1bac0cd26e879785705cf2d144fbf9835883da/chia_rs-0.42.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:10f2183ca4d96a2617dce4770718b7b558d8c088a155ba43740280f4f21fb3c4", size = 5501089, upload-time = "2026-03-31T12:21:07.633Z" },
+    { url = "https://files.pythonhosted.org/packages/21/da/d6a837ccfbdc1ab36dbd3142e20a6bcd3396adc3e7cf90806e6f7bd338e3/chia_rs-0.42.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:bc9e5383cd384ce824692f54cc1db0aa9c7cd04d3b008d68be6c11a1359d1f9e", size = 5586772, upload-time = "2026-03-31T12:21:09.407Z" },
+    { url = "https://files.pythonhosted.org/packages/8f/0f/6fb51c796189e55ca645f09e0e146cbf1791aea025707376777769d5b117/chia_rs-0.42.0-cp313-cp313-win_amd64.whl", hash = "sha256:2a0cdbc119e67326fca0a81a86f519fe8208ca38e3d12b41f9718e3752acf234", size = 3673290, upload-time = "2026-03-31T12:21:11.34Z" },
+    { url = "https://files.pythonhosted.org/packages/78/7a/b487519c245ce33ee7366eb0f483369b19305dfb22475b56e83cb55eac62/chia_rs-0.42.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:186311829e6ba974be34beb749020dbc8ee43a03ec022772a6797c7fccce50d1", size = 3734695, upload-time = "2026-03-31T12:21:13.44Z" },
+    { url = "https://files.pythonhosted.org/packages/a4/45/20112005092f9623981e3066e1c2fdacbf915ae7a5a371cec513b99aa115/chia_rs-0.42.0-cp314-cp314-macosx_13_0_x86_64.whl", hash = "sha256:fc4c42cfff564aad546751894f7e1b78c508b4b9d5868ddc0574443497b597c0", size = 4030616, upload-time = "2026-03-31T12:21:15.034Z" },
+    { url = "https://files.pythonhosted.org/packages/61/2b/857302fd6d4689b7e9970ea61c806a3386afa1045bce8a13e71bb45da75b/chia_rs-0.42.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:9f5393378c9a4316d55fe1676a3dea6d96515e27b443701ccf883daeff2fc108", size = 5518195, upload-time = "2026-03-31T12:21:16.934Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/c1/5d2e276b458e374dad74065e493644518f4b72ffdfc7ffed8c518b64eaae/chia_rs-0.42.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:0c5f862a3eac12b9c527ecff36e539c4603d0dab00a8eebf6c86bbb869fcd9ba", size = 5598545, upload-time = "2026-03-31T12:21:18.926Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/53/27892de4f47e77b770602e2f946be1541699442a46f02d5bd3e24fe322d1/chia_rs-0.42.0-cp314-cp314-win_amd64.whl", hash = "sha256:fc0cb9790f7e74f6941d36e53501ab3011947d6e7d7e97a4d769efc08cd7772b", size = 3679140, upload-time = "2026-03-31T12:21:20.602Z" },
+]
+
+[[package]]
 name = "click"
 version = "8.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -104,6 +130,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "blspy" },
+    { name = "chia-rs" },
     { name = "click" },
     { name = "psutil" },
     { name = "pydantic" },
@@ -114,6 +141,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "blspy", specifier = ">=2.0.3" },
+    { name = "chia-rs", specifier = ">=0.42.0" },
     { name = "click", specifier = ">=8.3.1" },
     { name = "psutil", specifier = ">=7.2.2" },
     { name = "pydantic", specifier = ">=2.12.5" },
