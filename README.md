@@ -8,6 +8,7 @@ Plot manager for Chia PoS2 (Proof of Space v2). Automates plot creation, schedul
 - **Job scheduling** -- parallel jobs with configurable stagger between launches
 - **Smart disk management** -- validates directories, monitors free space, auto-skips unavailable drives and re-enables them when available
 - **Archiving** -- transfers completed plots to remote storage via rsync/scp with automatic cleanup
+- **Remote disk monitoring** -- TUI shows free space on remote archive machines via SSH
 - **Even distribution** -- fills archive disks evenly, avoids duplicate plots and IO contention
 - **Graceful shutdown** -- `Ctrl+C` to drain (finish current jobs), double `Ctrl+C` to force stop
 - **State persistence** -- survives restarts, recovers running jobs
@@ -44,7 +45,7 @@ uv run orchid start
 
 ## Configuration
 
-Copy `config.example.yaml` to `config.yaml` and edit:
+Copy `config-example.yaml` to `config.yaml` and edit:
 
 ```yaml
 plotter:
@@ -79,7 +80,11 @@ archiving:
 ### TUI mode (recommended)
 
 ```bash
+# Default — clean logs (job events only)
 uv run orchid tui
+
+# Verbose — full plotter output in logs
+uv run orchid tui --verbose
 ```
 
 | Keybinding | Action |
@@ -91,8 +96,8 @@ uv run orchid tui
 
 The TUI shows three panels:
 - **Jobs** -- active jobs with progress, PID, elapsed time
-- **Disks** -- free space on configured directories
-- **Logs** -- plotter output and transfer status
+- **Disks** -- free space on local dirs and remote archive machines (via SSH)
+- **Logs** -- job events and transfer status
 
 ### CLI mode
 
@@ -125,6 +130,29 @@ uv run orchid kill <job_id>
 |---|---|
 | `Ctrl+C` (once) | Stop launching new jobs, wait for active to finish |
 | `Ctrl+C` (twice) | Kill all running jobs immediately |
+
+## SSH key setup
+
+Required for archiving and remote disk monitoring. Do this once on the plotting machine:
+
+**Linux / macOS:**
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id farmer@192.168.1.10
+```
+
+**Windows (PowerShell):**
+```powershell
+ssh-keygen -t ed25519
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh farmer@192.168.1.10 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+```
+
+Verify it works without a password prompt:
+```bash
+ssh farmer@192.168.1.10 df -h
+```
+
+After this, Orchid will automatically show remote disk usage in the TUI and transfer plots without any interaction.
 
 ## Deployment scenarios
 

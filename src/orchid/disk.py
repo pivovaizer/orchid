@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import subprocess
 from pathlib import Path
 
 log = logging.getLogger("orchid")
@@ -74,6 +75,37 @@ def validate_dirs(tmp_dirs: list[str], dst_dirs: list[str]) -> tuple[list[str], 
             log.warning("Dst dir unavailable: %s", d)
 
     return healthy_tmp, healthy_dst
+
+
+def parse_remote_dir(archive_dir: str) -> tuple[str, str] | None:
+    """Parse 'user@host:/path' into (host, path). Returns None if not remote."""
+    if "@" in archive_dir and ":" in archive_dir:
+        host, path = archive_dir.split(":", 1)
+        return host, path
+    return None
+
+
+def get_remote_disk_usage(host: str, path: str, timeout: int = 5) -> tuple[int, int] | None:
+    """Get (free_bytes, total_bytes) from remote host via SSH df.
+
+    Returns None if SSH fails or times out.
+    """
+    try:
+        result = subprocess.run(
+            ["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={timeout}", host, "df", "-B1", path],
+            capture_output=True, text=True, timeout=timeout + 2,
+        )
+        if result.returncode != 0:
+            return None
+        lines = result.stdout.strip().splitlines()
+        if len(lines) < 2:
+            return None
+        parts = lines[1].split()
+        total = int(parts[1])
+        free = int(parts[3])
+        return free, total
+    except Exception:
+        return None
 
 
 # Approximate plot sizes in bytes (for pos2, k -> size)

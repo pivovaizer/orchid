@@ -153,8 +153,9 @@ def details(ctx, job_id):
 
 
 @cli.command()
+@click.option("--verbose", is_flag=True, default=False, help="Show full plotter output in logs")
 @click.pass_context
-def tui(ctx):
+def tui(ctx, verbose):
     # Disable console logging for TUI mode
     logger = logging.getLogger("orchid")
     for h in logger.handlers[:]:
@@ -164,5 +165,5 @@ def tui(ctx):
     from tui.app import OrchidApp
     cfg = ctx.obj["config"]
     config_path = ctx.parent.params.get("config", "config.yaml")
-    app = OrchidApp(config=cfg, config_path=config_path)
+    app = OrchidApp(config=cfg, config_path=config_path, verbose_logs=verbose)
     app.run()

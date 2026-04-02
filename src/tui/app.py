@@ -12,6 +12,7 @@ from orchid.manager import PlotManager
 from orchid.loader import load_config
 from orchid.job import JobStatus
 from orchid.archive import Archiver
+from orchid.disk import get_remote_disk_usage, parse_remote_dir, format_bytes
 
 
 class JobPanel(Static):
@@ -52,10 +53,11 @@ class OrchidApp(App):
         ("ctrl+r", "refresh", "Refresh"),
     ]
 
-    def __init__(self, config=None, config_path: str = "config.yaml"):
+    def __init__(self, config=None, config_path: str = "config.yaml", verbose_logs: bool = False):
         super().__init__()
         self.config = config
         self.config_path = config_path
+        self.verbose_logs = verbose_logs
         self.manager = None
         self._plotting = False
         self._draining = False
@@ -74,11 +76,16 @@ class OrchidApp(App):
     def on_mount(self):
         # Jobs table columns
         jobs_table = self.query_one(JobPanel).query_one(DataTable)
-        jobs_table.add_columns("ID", "K", "Status", "PID", "Time", "Progress")
+        jobs_table.add_column("ID", width=12)
+        jobs_table.add_column("K", width=6)
+        jobs_table.add_column("Status", width=12)
+        jobs_table.add_column("PID", width=10)
+        jobs_table.add_column("Time", width=12)
+        jobs_table.add_column("Progress", width=30)
 
         # Disks table columns
         disk_table = self.query_one(DiskPanel).query_one(DataTable)
-        disk_table.add_columns("Directory", "Free", "Total", "Used %")
+        disk_table.add_columns("Directory", "Free", "Total", "Used %", "Type")
         self.refresh_disks()
         self.set_interval(5, self.refresh_disks)
 
@@ -116,18 +123,34 @@ class OrchidApp(App):
         table = self.query_one(DiskPanel).query_one(DataTable)
         table.clear()
 
-        dirs = []
-        if self.config:
-            dirs = list(set(self.config.directories.tmp + self.config.directories.dst))
-        for d in dirs:
+        if not self.config:
+            return
+
+        # Local dirs
+        local_dirs = list(set(self.config.directories.tmp + self.config.directories.dst))
+        for d in local_dirs:
             try:
                 usage = shutil.disk_usage(d)
-                free_gb = f"{usage.free / (1024**3):.1f} GB"
-                total_gb = f"{usage.total / (1024**3):.1f} GB"
-                used_pct = f"{usage.used / usage.total * 100:.1f}%"
-                table.add_row(d, free_gb, total_gb, used_pct)
+                free_str = format_bytes(usage.free)
+                total_str = format_bytes(usage.total)
+                used_pct = f"{usage.used / usage.total * 100:.0f}%"
+                table.add_row(d, free_str, total_str, used_pct, "local")
             except OSError:
-                table.add_row(d, "N/A", "N/A", "N/A")
+                table.add_row(d, "N/A", "N/A", "N/A", "local")
+
+        # Remote archive dirs
+        if self.config.archiving.enabled:
+            for d in self.config.archiving.archive_dirs:
+                remote = parse_remote_dir(d)
+                if remote:
+                    host, path = remote
+                    result = get_remote_disk_usage(host, path)
+                    if result:
+                        free, total = result
+                        used_pct = f"{(total - free) / total * 100:.0f}%"
+                        table.add_row(d, format_bytes(free), format_bytes(total), used_pct, "remote")
+                    else:
+                        table.add_row(d, "N/A", "N/A", "N/A", "remote")
 
     # ── Jobs ─────────────────────────────────────────────────
 
@@ -207,22 +230,23 @@ class OrchidApp(App):
         self.set_interval(1, self.refresh_jobs, name="job_refresh")
 
     def _on_plotter_output(self, job_id: str, line: str):
-        """Parse plotter output — update progress on job, log only important lines."""
+        """Parse plotter output — update progress on job, log only if verbose."""
         # Try to parse progress bar line
         match = self._PROGRESS_RE.search(line)
         if match:
             pct = int(match.group(1))
             phase = match.group(2)
-            # Update job progress
             for job in self.manager.jobs:
                 if job.job_id == job_id:
                     job.progress = pct
                     job.phase = phase
                     break
-            return  # Don't log progress lines
+            return  # Never log progress bar lines
 
-        # Log important lines (not progress bars)
-        if line.strip():
+        if not line.strip():
+            return
+
+        if self.verbose_logs:
             self.call_from_thread(self.log_write, f"[dim]{job_id[:8]}[/dim] {line}")
 
     def _plot_loop(self):
